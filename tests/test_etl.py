@@ -1,11 +1,30 @@
-from src.etl import build_sales_data, run_etl
+import pandas as pd
+
+from src.etl import run_etl, transform_orders
 
 
-def test_run_etl_calculates_revenue(tmp_path):
-    output_file = tmp_path / "sales.csv"
+def test_revenue_column_exists_and_non_negative(tmp_path):
+    processed_orders = run_etl(
+        raw_file=tmp_path / "raw" / "orders.csv",
+        processed_file=tmp_path / "processed" / "orders_clean.csv",
+        database_file=tmp_path / "db" / "orders.db",
+    )
 
-    processed_sales = run_etl(output_file)
+    assert "revenue" in processed_orders.columns
+    assert (processed_orders["revenue"] >= 0).all()
 
-    assert processed_sales["revenue"].tolist() == [9.0, 6.25, 4.5]
-    assert output_file.exists()
-    assert len(build_sales_data()) == 3
+
+def test_missing_quantity_filled_with_one():
+    orders = pd.DataFrame(
+        {
+            "order_id": [1],
+            "order_date": ["2026-01-01"],
+            "product": ["Pen"],
+            "quantity": [None],
+            "unit_price": [1.25],
+        }
+    )
+
+    cleaned_orders = transform_orders(orders)
+
+    assert cleaned_orders.loc[0, "quantity"] == 1

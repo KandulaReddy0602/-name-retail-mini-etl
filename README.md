@@ -1,7 +1,8 @@
 # Retail Mini ETL
 
-A beginner-friendly example that creates a tiny retail dataset, transforms it
-with pandas, and writes the processed data to `data/processed/sales.csv`.
+A beginner-friendly example that creates a tiny retail orders dataset, cleans it
+with pandas, writes `data/processed/orders_clean.csv`, and loads SQLite at
+`db/orders.db`.
 
 ## Run the project
 
@@ -15,4 +16,4 @@ python -m src.etl
 pytest
 ```
 
-The ETL script prints the total revenue and creates the processed CSV file.
+The ETL script prints three KPIs and creates the processed CSV and SQLite table.
